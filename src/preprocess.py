@@ -41,7 +41,7 @@ y = Surv.from_arrays(
 
 stage_map = {
     'Stage I': 1, 'Stage IA': 1, 'Stage IB': 1,
-    'Stage II': 2, 'Stage FfIIA': 2, 'Stage IIB': 2,
+    'Stage II': 2, 'Stage IIA': 2, 'Stage IIB': 2,
     'Stage III': 3, 'Stage IIIA': 3, 'Stage IIIB': 3, 'Stage IIIC': 3,
     'Stage IV': 4
 }
@@ -72,14 +72,35 @@ race_cols = [col for col in df_patient.columns if col.startswith('race_')]
 dx_cols = [col for col in df_patient.columns if col.startswith('dx_')]
 
 feature_cols = feature_cols + race_cols + dx_cols
-
 final_cols = ['cases.submitter_id', 'survival_time', 'event'] + feature_cols
+
+# debug
+print("df_patient 전체:", df_patient["cases.submitter_id"].nunique())
+print("dropna 전:", df_patient[final_cols]["cases.submitter_id"].nunique())
+
+
 df_final = df_patient[final_cols].dropna()
 
+# debug
+print("dropna 후:", df_patient[final_cols].dropna()["cases.submitter_id"].nunique())
+
+print(
+    df_final[['cases.submitter_id','event']]
+    .drop_duplicates()
+    ['event']
+    .value_counts()
+)
+
+
+print(
+    sorted(df_patient["diagnoses.ajcc_pathologic_stage"]
+           .dropna()
+           .unique())
+)
 
 
 # WSI feature 매칭
-feature_dir = '/mnt/e/pathML/features_uni/pt_files'
+feature_dir = '/home/yuz/wsi-survival/features_uni/pt_files'
 feature_files = [f for f in os.listdir(feature_dir) if f.endswith('.pt')]
 
 path_data = []
@@ -90,12 +111,12 @@ for f in feature_files:
     # path_data.append({'cases.submitter_id': patient_id, '': full_path})
     path_data.append({
     "cases.submitter_id": patient_id,
-    "feature_file": f})
+    "feature_path": f})
 
 df_path = pd.DataFrame(path_data)
 df_final = df_final.merge(df_path, on='cases.submitter_id', how='inner')
 
-df_final.to_csv('/home/yuz/wsi-survival/clinical_survival_processed.csv', index=False)
+df_final.to_csv('/home/yuz/wsi-survival/clinical_survival_processed_final.csv', index=False)
 print(f"최종 병합 완료: {len(df_final)}")
 print(f"{df_final['cases.submitter_id'].nunique()}명")
 print(f"컬럼 구성: {df_final.columns.tolist()}")

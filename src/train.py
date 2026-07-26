@@ -43,7 +43,7 @@ def concordance_index_simple(times, risks, events):
 # =========================
 # Config
 # =========================
-CSV_PATH = '/home/yuz/wsi-survival/clinical_survival_processed.csv'
+CSV_PATH = '/home/yuz/wsi-survival/clinical_survival_processed_final.csv'
 
 FEATURE_COLS = [
     'demographic.age_at_index',
@@ -57,7 +57,7 @@ FEATURE_COLS = [
     'dx_Other'
 ]
 
-EPOCHS = 100
+EPOCHS = 50
 LR = 1e-4
 SEED = 42
 BAG_BATCH_SIZE = 1
@@ -74,7 +74,7 @@ def set_seed(seed: int):
 
 # ===== Regularization / Early stopping =====
 WEIGHT_DECAY = 1e-4          
-PATIENCE = 100                
+PATIENCE = 30                
 MIN_DELTA = 1e-4             
 # CKPT_PATH = "best_survival_attn.pt"
 # history = []
@@ -382,8 +382,18 @@ def main():
         print("=" * 50) 
 
         model = SurvivalModel(aggregator).to(DEVICE)
-        optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY) # AdamW + weight decay
 
+        # 파라미터 수 계산
+        n_params = sum(
+            p.numel() for p in model.parameters()
+            if p.requires_grad
+        )
+        
+        print(f"\nTrainable Parameters: {n_params:,}")
+        print(f"({n_params/1e6:.2f} M)")
+
+
+        optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY) # AdamW + weight decay
 
         early_stopper = EarlyStopping(
             patience=PATIENCE,
