@@ -1,5 +1,16 @@
-# Title
-Comparative Study of MIL Aggregation Methods for WSI-based Survival Prediction on TCGA-BRCA
+# Comparative Study of MIL Aggregation Methods for WSI-based Survival Prediction on TCGA-BRCA
+
+**Yu-Jin Kim, Seong-heum Kim**  
+School of AI Software, Soongsil University  
+*ACK 2026 (KIPS Fall Conference), Vol. 33, No. 2*
+
+[[Paper (Korean)](docs/paper_ACK2026.pdf)] [[Poster](docs/poster_ACK2026.pdf)]
+
+> **TL;DR** With frozen UNI features, the relatively simple ABMIL achieved the highest C-index (**0.75 ± 0.03**) and the lowest fold-to-fold variance among four MIL aggregators. More complex aggregators (TransMIL, MambaMIL) did not improve survival prediction.
+
+<p align="center">
+  <a href="docs/poster_ACK2026.pdf"><img src="assets/poster_thumbnail.png" width="600" alt="ACK 2026 poster"></a>
+</p>
 
 # Overview
 This project compares four Multiple Instance Learning (MIL) aggregation methods — Mean Pooling, ABMIL (Attention-Based MIL), TransMIL, and MambaMIL — for patient survival prediction from Whole Slide Images (WSIs).
